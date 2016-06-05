@@ -57,32 +57,6 @@
 (defconst intero-package-version "0.1.13"
   "Package version to auto-install.")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Modes
-
-(defvar intero-mode-map (make-sparse-keymap)
-  "Intero minor mode's map.")
-
-;;;###autoload
-(define-minor-mode intero-mode "Minor mode for Intero"
-  :lighter " Intero"
-  :keymap intero-mode-map
-  (when (intero-buffer-file-name)
-    (if intero-mode
-        (progn (flycheck-select-checker 'intero)
-               (flycheck-mode)
-               (add-to-list (make-local-variable 'company-backends) 'company-intero)
-               (company-mode))
-      (message "Intero mode disabled."))))
-
-(define-key intero-mode-map (kbd "C-c C-t") 'intero-type-at)
-(define-key intero-mode-map (kbd "C-c C-i") 'intero-info)
-(define-key intero-mode-map (kbd "M-.") 'intero-goto-definition)
-(define-key intero-mode-map (kbd "C-c C-l") 'intero-repl-load)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Configuration
-
 (defvar intero-wrapper "stack"
   "Command that launches a shell in which to run intero.")
 
