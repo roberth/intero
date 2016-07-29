@@ -786,7 +786,9 @@ calling CALLBACK as (CALLBACK STATE REPLY)."
   (let ((buffer (intero-get-buffer-create worker)))
     (if (get-buffer-process buffer)
         buffer
-      (intero-get-worker-create worker nil (current-buffer)))))
+        (progn (intero-get-worker-create worker nil (current-buffer))
+               buffer
+          ))))
 
 (defun intero-process (worker)
   "Get the worker process for the current directory."
@@ -811,7 +813,9 @@ calling CALLBACK as (CALLBACK STATE REPLY)."
         (progn
           (insert "You are not using Stack, and will have to install intero manually.
  If you are using Nix, add intero to the shell.nix file for your project.")
-          (redisplay))
+          (redisplay)
+          (switch-to-buffer source-buffer)
+          (intero-start-process-in-buffer buffer targets source-buffer))
       (insert (cl-case install-status
                 (not-installed "Intero is not installed in the Stack environment.")
                 (wrong-version "The wrong version of Intero is installed for this Emacs package."))
@@ -907,9 +911,7 @@ performing a initial actions in SOURCE-BUFFER, if specified."
   (append (list "--with-ghc"
                 "intero"
                 (let ((dir (make-temp-file "intero" t)))
-                  (format "--ghc-options=\"-odir=%s -hidir=%s\""
-                          (concat "-odir=" dir)
-                          (concat "-hidir=" dir))))
+                  (format "--builddir=\"%s\"" dir)))
           targets))
 
 (defun intero-sentinel (process change)
